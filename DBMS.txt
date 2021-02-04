@@ -49,6 +49,29 @@ Following code will display constraints applied by the user.
   The char(50) will take exactly 50 characters while writing thus to avoid this we initiallize fields as:
   varchar(50) or varchar2(50) 
   or we can simply trim(patName) while printing.
+    select PATID||' '||trim(PATNAME)||' '||trim(BLOODGRP)||' '||CONTACT||' '||EMAIL from Patient;
+    
+//DELETING DATA FROM TABLE
+    delete from Patient;      //Deletes every record of table
+    delete from Patient where patId=104;
 
+//UPDATING
+    update Patient set patId=109 where patId=5123;
+    
+FOREIGN KEY CAN BE DUPLICATED & can accept null values......!
 
-
+EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
+      create table doctor(docId int primary key,docName char(50) not null);
+      
+      //timestamp is DT which includes both D&T
+      create table appnt(appDate timestamp,docId int references doctor(docId), patId int references Patient(patId));  
+      insert into doctor values(101,'xyz');
+      
+      //systimestamp gives the current time of ur computer.
+      insert into appnt values(systimestamp,101,'xyz');   
+      insert into appnt values(systimestamp,101,1097);
+      
+//MAKING COMPOSITE KEY
+       create table appnt1(appDate timestamp,docId int references doctor(docId), patId int references Patient(patId), primary key(appDate,docId,patId));
+//MAKING FOREING KEY OF COMPOSITE KEY
+      create table visit(appDate timestamp,docId int , patId int , foreign key(appDate,docId,patId) references appnt1(appDate,docId,patId));

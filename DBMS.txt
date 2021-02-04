@@ -14,7 +14,7 @@ a) Table level
   2)Foreign Key
 b) Field level
   1)Unique
-  2)Not null
+  2)Not null (It is also considered as Check)
   3)Check (User defined Constraint)
   4)Default
 
@@ -27,3 +27,28 @@ create table Patient(patId int primary key,
                      contact int unique,
                      email char(50) check(email=lower(email))
                     );
+ 
+ 
+Type -->desc user_constraints<-- this to see how much user constraints fields are there at the total.
+
+
+Remember that when we make table it is named as uppercase in the oracle.
+Following code will display constraints applied by the user.
+  select constraint_name,constraint_type from user_constraints where table_name='PATIENT';
+  select constraint_name,constraint_type,search_condition from user_constraints where table_name='PATIENT';
+
+
+
+///INSERTING data in tablename
+    insert into Patient values(123,'Hey1',default,9999,'pooj@gmail.com');
+
+//Printing data of the table.
+    select * from Patient;  //This will take more lines to display
+    select PATID||PATNAME||BLOODGRP||CONTACT||EMAIL from Patient;
+    
+  The char(50) will take exactly 50 characters while writing thus to avoid this we initiallize fields as:
+  varchar(50) or varchar2(50) 
+  or we can simply trim(patName) while printing.
+
+
+

@@ -18,3 +18,12 @@ b) Field level
   3)Check (User defined Constraint)
   4)Default
 
+To delete table from DB we write --> drop table Patient; <--
+
+Let we add constraints....
+create table Patient(patId int primary key,
+                     patName char(50) not null,
+                     BloodGrp char(5) default 'A +ve',
+                     contact int unique,
+                     email char(50) check(email=lower(email))
+                    );

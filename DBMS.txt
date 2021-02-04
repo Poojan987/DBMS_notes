@@ -1,3 +1,20 @@
 To start the DBMS(SQL 11g) on your PC. Go to start Oracle11g-->run SQL command line.
 First we have to connect our database. Type     connect SYSTEM          then write password.
 
+create table Patient(patId int,
+                     patName char(50),
+                     BloodGrp char(5)
+                    );
+Type --> desc Patient; <-- to see whole table.
+We can see that by default the int will have space of 38 bytes.
+
+There can be constraints on our table which can be at:
+a) Table level
+  1)Primary Key
+  2)Foreign Key
+b) Field level
+  1)Unique
+  2)Not null
+  3)Check (User defined Constraint)
+  4)Default
+

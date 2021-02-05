@@ -175,5 +175,19 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
                 -------->eg. Display name of doctor whose name are same but gender are different.
           select distinct d1.docname from doctor d1,doctor d2 where d1.docname=d2.docname and d1.gender<>d2.gender;
     
-        
+   
+   
+    /////////GROUP BY and HAVING
+    
+              select gender,count(*) from docor group by gender;
+              select gender,count(*) from docor group by gender having count(*)>1;  // The fields used in group by and having can only be selected in select
+              
+   //////// ORDER BY 
+         select * from doctor order by docname desc,gender ;  // this will perform first descending order of docname then ascending of gender then prints.
+         
+         
+         
+         
+              
+    
 

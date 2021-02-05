@@ -77,5 +77,12 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
       create table visit(appDate timestamp,docId int , patId int , foreign key(appDate,docId,patId) references appnt1(appDate,docId,patId));
 
 
-//
+//QUERY
+  **//SELECT KEYWORD**
+      select distinct fieldname/*/function/expression
+      from tablename/subquery
+      where condition on record level (can't specify condition on aggregate fn)
+      group by fieldname/fn/expression
+      having cond on grp/aggregate fn
+      order by fieldname/expression/function
 

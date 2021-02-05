@@ -124,8 +124,23 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
           select stdname from student where stdhobby is null;
           select stdname from student where stdhobby is not null;
           
+   ///    EXISTS OP
           
-         
+          select patid from patient where exists(select * from appnt);    // IF INNER QUERIES HAVE DATA THEN IT WILL RETURN TRUE.
+          
+  //// AGGREGATE FNs
+        select avg(stdid),count(*),count(stdhobby), max(stdid),min(stdid),sum(stdid) from student;    
+                          //count(*) will count null values and will count all the total record
+        select count(distinct grpnum) from student;   //To count only distinct values.
+        
+ ////// DIFFERENT TYPES OF JOINT
+    a)Cross
+        select * from patient,student;
+    
+    b) Simple/equi/natural(=)
+        select docname||' '||patname from doctor,patient where doctor.docid=patient.patid;
+    c) Multiple join
+        select docname||' '||patname from doctor,patient,appnt where doctor.docid=appnt.docid and patient.patid=appnt.patid;
         
         
         

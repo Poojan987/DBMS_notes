@@ -139,9 +139,30 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
     
     b) Simple/equi/natural(=)
         select docname||' '||patname from doctor,patient where doctor.docid=patient.patid;
+        
     c) Multiple join
         select docname||' '||patname from doctor,patient,appnt where doctor.docid=appnt.docid and patient.patid=appnt.patid;
+    d) Inner join
+        select * from doctor inner join appnt on doctor.docid=appnt.docid;
+                //Same as simple join
+                
+    // INERSECTION,UNION,DIFFERENCE
+        select docid from doctor intersect select docid from appnt;
+        select docid from doctor minus select docid from appnt;
+        select docid from doctor union select docid from appnt;
         
+     e) OUTER JOIN
+        
+        1)Left join,Right join, full join:
+            It will display the whole left table and checks wheter the condition is existing or not if it exist then right table will also be shown else it will show null in every part of right table if condition is false.
+            And if frequency is more in any one of them then the other's table will increase its frequency by itself.
+            select doctor.docid||' ' ||dotor.contactno||' '||appnt.docid||' '||appnt.appdate||appnt.patid from doctor left join appnt on doctor.docid=appnt.docid;
+            
+            It will display the whole right table and checks wheter the condition is existing or not if it exist then left table will also be shown else it will show null in every part of left table if condition is false.
+            select doctor.docid||' ' ||dotor.contactno||' '||appnt.docid||' '||appnt.appdate||appnt.patid from doctor left join appnt on doctor.docid=appnt.docid;
+            
+            It is combination of left join and right join
+            select doctor.docid||' ' ||dotor.contactno||' '||appnt.docid||' '||appnt.appdate||appnt.patid from doctor full join appnt on doctor.docid=appnt.docid;
         
         
         

@@ -1,3 +1,5 @@
+HELLO WORLD
+
 To start the DBMS(SQL 11g) on your PC. Go to start Oracle11g-->run SQL command line.
 First we have to connect our database. Type     connect SYSTEM          then write password.
 

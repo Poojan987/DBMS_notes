@@ -97,7 +97,7 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
         initcap(patname)              //Capitalize initial letter.
         substr(patname,2,5) from patient;   //Substr of patname strting from 2nd letter to 6th letter.
         
-      ///
+      /// IN OPERATOR
         select * from patient where length(patid)>2;
         select * from patient where patid in (101,103);
         select * from patient where patid in (select patid from appnt);   //The subquery will be executed first.
@@ -105,7 +105,27 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
         WE CANNOT WRITE LIKE..... 
           select * from patient where patid in (select * from appnt); // as * returns everything in the subquery.
           select * from patient where patid in (select patname from appnt);  // as datatype of patid and patname are not same.
-        
+      
+      /// LIKE OP
+         % is used for many characters
+         _ is used for single character 
+         
+         select patname from patient where patname like '_ya%';
+         select patname from patient where trim(patname) like '_ya';
+         
+         
+     /// BETWEEN OP
+         select patid from patient where patid between 1 and 10;    //HERE 1 AND 10 BOTH ARE INCLUDED IN THE RANGE.
+         
+         OR WE CAN WRITE EQUIVALENT AS:   select patid from patient where patid>=1 and patid<=10;   
+         
+    ///   IS NULL OP
+          
+          select stdname from student where stdhobby is null;
+          select stdname from student where stdhobby is not null;
+          
+          
+         
         
         
         

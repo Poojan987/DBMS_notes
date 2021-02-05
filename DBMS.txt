@@ -96,4 +96,18 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
         trim(patname),ltrim(),rtrim(),
         initcap(patname)              //Capitalize initial letter.
         substr(patname,2,5) from patient;   //Substr of patname strting from 2nd letter to 6th letter.
+        
+      ///
+        select * from patient where length(patid)>2;
+        select * from patient where patid in (101,103);
+        select * from patient where patid in (select patid from appnt);   //The subquery will be executed first.
+        
+        WE CANNOT WRITE LIKE..... 
+          select * from patient where patid in (select * from appnt); // as * returns everything in the subquery.
+          select * from patient where patid in (select patname from appnt);  // as datatype of patid and patname are not same.
+        
+        
+        
+        
+        
 

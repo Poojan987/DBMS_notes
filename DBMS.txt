@@ -39,7 +39,7 @@ Following code will display constraints applied by the user.
 
 
 
-///INSERTING data in tablename
+///**INSERTING data in tablename**
     insert into Patient values(123,'Hey1',default,9999,'pooj@gmail.com');
 
 //Printing data of the table.
@@ -71,7 +71,11 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
       insert into appnt values(systimestamp,101,'xyz');   
       insert into appnt values(systimestamp,101,1097);
       
-//MAKING COMPOSITE KEY
+//**MAKING COMPOSITE KEY**
        create table appnt1(appDate timestamp,docId int references doctor(docId), patId int references Patient(patId), primary key(appDate,docId,patId));
-//MAKING FOREING KEY OF COMPOSITE KEY
+//**MAKING FOREING KEY OF COMPOSITE KEY**
       create table visit(appDate timestamp,docId int , patId int , foreign key(appDate,docId,patId) references appnt1(appDate,docId,patId));
+
+
+//
+

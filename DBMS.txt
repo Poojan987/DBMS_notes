@@ -1,5 +1,8 @@
 HELLO WORLD
 
+<>      -------> NOT EQUALS TO SIGN
+
+
 To start the DBMS(SQL 11g) on your PC. Go to start Oracle11g-->run SQL command line.
 First we have to connect our database. Type     connect SYSTEM          then write password.
 
@@ -165,5 +168,12 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
             select doctor.docid||' ' ||dotor.contactno||' '||appnt.docid||' '||appnt.appdate||appnt.patid from doctor full join appnt on doctor.docid=appnt.docid;
         
         
+        ///////////ALIAS
+            select d.docid,d.docname from doctor d;   //here d is alias
+    
+    f) Self join //Joining table with itself
+                -------->eg. Display name of doctor whose name are same but gender are different.
+          select distinct d1.docname from doctor d1,doctor d2 where d1.docname=d2.docname and d1.gender<>d2.gender;
+    
         
 

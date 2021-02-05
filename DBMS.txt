@@ -85,4 +85,13 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
       group by fieldname/fn/expression
       having cond on grp/aggregate fn
       order by fieldname/expression/function
+      
+      /DISTINCT
+        select distinct patname,bloodgrp from patient;        /////Display unique record
+
+      //STRING FNs  Strings have 1 based indexing
+        select upper(patname),lower(patname),
+        trim(patname),ltrim(),rtrim(),
+        initcap(patname)              //Capitalize initial letter.
+        substr(patname,2,5) from patient;   //Substr of patname strting from 2nd letter to 6th letter.
 

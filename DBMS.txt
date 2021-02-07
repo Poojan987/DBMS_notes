@@ -186,7 +186,7 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
          select * from doctor order by docname desc,gender ;  // this will perform first descending order of docname then ascending of gender then prints.
          
          
-         
+    select * from sale where length(saletext)=(select max(length(saletext)) from sale);
          
               
     

@@ -80,6 +80,13 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
        create table appnt1(appDate timestamp,docId int references doctor(docId), patId int references Patient(patId), primary key(appDate,docId,patId));
 //**MAKING FOREING KEY OF COMPOSITE KEY**
       create table visit(appDate timestamp,docId int , patId int , foreign key(appDate,docId,patId) references appnt1(appDate,docId,patId));
+      
+      dereferencing composite key as a foreign key :
+         create table takes
+            2  (ID int references student(ID),course_id varchar(10),sec_id varchar(10),semester int,year int,
+              grade varchar(5) ,foreign key(course_id,sec_id,semester,year) references section(course_id,sec_id,semester,year),
+              primary key(ID,course_id,sec_id,semester,year));
+
 
 
 //QUERY
@@ -104,6 +111,9 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
         select * from patient where length(patid)>2;
         select * from patient where patid in (101,103);
         select * from patient where patid in (select patid from appnt);   //The subquery will be executed first.
+        
+        select customer_name from customer where customer_city in (select branch_city from branch where branch_name 
+        in (select branch_name from bank_account where account_number         in (select account_number from depositer where customer_name in (select customer_name from                 customer))));
         
         WE CANNOT WRITE LIKE..... 
           select * from patient where patid in (select * from appnt); // as * returns everything in the subquery.

@@ -204,4 +204,8 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
               
     DROPPING UNIQUE CONSTRAINTS..................
     alter table student drop unique (dept_name);
+    
+    7.	Enroll every student in the Comp. Sci. department in section 1.
+      insert into takes (id, course_id, sec_id, semester, year,grade) select id,'CS-001',1,3,2009,'A+' from student where dept_name='CSE';
+
 

@@ -4,6 +4,7 @@ FOREIGN KEY MAY BE NULL
 <>      -------> NOT EQUALS TO SIGN
 
 
+
 To start the DBMS(SQL 11g) on your PC. Go to start Oracle11g-->run SQL command line.
 First we have to connect our database. Type     connect SYSTEM          then write password.
 
@@ -201,5 +202,6 @@ EXAMPLE FOR MAKING FOREIGN KEY AND TIME DATA TYPE:
     select * from sale where length(saletext)=(select max(length(saletext)) from sale);
          
               
-    
+    DROPPING UNIQUE CONSTRAINTS..................
+    alter table student drop unique (dept_name);
 

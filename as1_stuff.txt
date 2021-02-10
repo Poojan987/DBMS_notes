@@ -1,0 +1,392 @@
+SQL> desc branch;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ BRANCH_NAME                               NOT NULL VARCHAR2(45)
+ BRANCH_CITY                               NOT NULL VARCHAR2(50)
+ ASSETS                                    NOT NULL VARCHAR2(50)
+
+
+
+
+create table account(account_number int primary key ,branch_name varchar(45) references branch(branch_name),balance float);
+
+
+
+SQL> desc account;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ ACCOUNT_NUMBER                            NOT NULL NUMBER(38)
+ BRANCH_NAME                                        VARCHAR2(45)
+ BALANCE                                            FLOAT(126)
+
+
+
+ create table loan(loan_number int primary key ,branch_name varchar(45) references branch(branch_name),amount float);
+
+Table created.
+
+SQL> desc loan;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ LOAN_NUMBER                               NOT NULL NUMBER(38)
+ BRANCH_NAME                                        VARCHAR2(45)
+ AMOUNT                                             FLOAT(126)
+
+
+
+ create table customer(customer_name varchar(100) primary key,customer_street varchar(50),customer_city varchar(50));
+
+Table created.
+
+SQL> desc customer;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ CUSTOMER_NAME                             NOT NULL VARCHAR2(100)
+ CUSTOMER_STREET                                    VARCHAR2(50)
+ CUSTOMER_CITY                                      VARCHAR2(50)
+
+
+create table borrower(customer_name varchar(100) references customer(customer_name),loan_number int references loan(loan_number),primary key(customer_name,loan_number));
+
+Table created.
+
+SQL> desc borrower;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ CUSTOMER_NAME                             NOT NULL VARCHAR2(100)
+ LOAN_NUMBER                               NOT NULL NUMBER(38)
+
+create table depositer(customer_name varchar(100) references customer(customer_name),account_number int references account(account_number),primary key(customer_name,account_number));
+
+Table created.
+
+SQL> desc depositer;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ CUSTOMER_NAME                             NOT NULL VARCHAR2(100)
+ ACCOUNT_NUMBER                            NOT NULL NUMBER(38)
+
+
+
+
+insert into branch values('ICICI bank','Ahmedabad',1800000);
+insert into branch values('HDFC bank','Mumbai',5000000);
+insert into branch values('IDBI bank','Kolkata',4700000);
+insert into branch values('Bank Of Baroda','Tamil Nadu',7550000);
+insert into branch values('SBI','Delhi',17550000);
+
+SQL> select * from bank_account;
+
+ACCOUNT_NUMBER BRANCH_NAME                                      BALANCE
+-------------- --------------------------------------------- ----------
+           101 HDFC bank                                          50000
+           102 SBI                                               700000
+           103 SBI                                              1000000
+           104 Bank Of Baroda                                   5900000
+           105 Bank Of Baroda                                    100000
+           106 ICICI bank                                       4000000
+
+6 rows selected.
+
+
+
+
+SQL> insert into loan values(901,'ICICI bank',100000,default);
+
+1 row created.
+
+SQL> insert into loan values(902,'SBI',5000000,default);
+
+1 row created.
+
+SQL> insert into loan values(903,'IDBI bank',10000,default);
+
+1 row created.
+
+SQL> insert into loan values(904,'HDFC bank',800000,default);
+
+1 row created.
+
+SQL> select * from loan;
+
+LOAN_NUMBER BRANCH_NAME                                       AMOUNT LOAN_TAKE
+----------- --------------------------------------------- ---------- ---------
+        901 ICICI bank                                        100000 08-FEB-21
+        902 SBI                                              5000000 08-FEB-21
+        903 IDBI bank                                          10000 08-FEB-21
+        904 HDFC bank                                         800000 08-FEB-21
+
+
+
+
+
+
+SQL> insert into customer values('Poojan Gandhi','Bodakdev','Surat',12345);
+
+1 row created.
+
+SQL> insert into customer values('Kathan Shah','Texaco Road','Surat',22345);
+
+1 row created.
+
+SQL> insert into customer values('Preet Modh','Ring Road','Madras',32345);
+
+1 row created.
+
+SQL> insert into customer values('Shrey Thakkar','Thaltej','chennai',42345);
+
+1 row created.
+
+SQL> insert into customer values('Naman Parikh','Gurukul','Hyderabad',52345);
+
+1 row created.
+
+SQL> insert into customer values('Meet Patel','Gathlodia','Ahmedabad',62345);
+
+1 row created.
+
+SQL> insert into customer values('Sanikaa Tambhad','DriveInRoad','Ahmedabad',72345);
+
+1 row created.
+
+SQL> insert into customer values('Manal Shah','Fire Road','Agra',82345);
+
+1 row created.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SQL> insert into borrower values( 'Meet Patel',901 );
+
+1 row created.
+
+SQL> insert into borrower values( 'Naman Parikh',902 );
+
+1 row created.
+
+SQL> insert into borrower values( 'Kathan Shah',903 );
+
+1 row created.
+
+SQL> insert into borrower values( 'Poojan Gandhi',904 );
+
+1 row created.
+
+
+
+
+
+SQL> insert into depositer values( 'Poojan Gandhi',  101);
+
+1 row created.
+
+SQL> insert into depositer values( 'Shrey Thakkar',  102);
+
+1 row created.
+
+SQL> insert into depositer values( 'Manal Shah',  103);
+
+1 row created.
+
+SQL> insert into depositer values( 'Poojan Gandhi',  104);
+
+1 row created.
+
+SQL> insert into depositer values( 'Preet Modh',  105);
+
+1 row created.
+
+SQL> insert into depositer values( 'Sanikaa Tambhad',  106);
+
+1 row created.
+
+
+
+
+
+
+
+
+=======================================UNIVERSITY DB=========================================================
+
+CLASSROOM
+DEPARTMENT
+
+SQL> create table classroom(building varchar(50),room_no int, capacity int,primary key(building,room_no));
+
+Table created.
+
+SQL> create table department
+  2  (dept_name varchar(50) primary key,building varchar(50),budget float);
+
+
+INSTRUCTOR
+COURSE
+
+SQL> create table instructor
+  2  (ID int primary key,name varchar(50),dept_name varchar(50) references department(dept_name),salary float);
+
+
+
+SQL> create table course
+  2  (course_id varchar(10) primary key, title varchar(50), dept_name varchar(50) references department(dept_name),credits int);
+
+
+PREREQ
+SQL> create table prereq
+  2  (course_id varchar(10) references course(course_id),prereq_id varchar(10),primary key(course_id,prereq_id));
+
+
+
+
+
+TIME SLOT
+
+SQL> create table time_slot
+  2  (time_slot_id int,day varchar(50),start_time timestamp,end_time timestamp ,primary key(time_slot_id));
+
+
+
+SECTION
+
+
+
+create table section(course_id varchar(10),sec_id varchar(10),semester int,year int,building varchar(50),room_no int, 
+foreign key(building,room_no) references classroom(building,room_no),
+time_slot_id int references time_slot(time_slot_id),primary key(course_id,sec_id,semester,year));
+
+
+TEACHES
+
+
+create table teaches
+  2  (ID int references instructor(ID),course_id varchar(10),sec_id varchar(10),
+semester int,year int,foreign key(course_id,sec_id,semester,year) references section(course_id,sec_id,semester,year),
+primary key(ID,course_id,sec_id,semester,year));
+
+
+STUDENT
+
+ create table student
+  2  (ID int,name varchar(50),dept_name varchar(50) references department(dept_name),tot_cred int);
+
+	alter table student modify ID int primary key;
+
+
+
+
+ADVISOR
+create table advisor
+  2  (s_id int references student(ID) primary key,i_id int references instructor(ID));
+
+
+
+TAKES
+
+ create table takes
+  2  (ID int references student(ID),course_id varchar(10),sec_id varchar(10),semester int,year int,
+ grade varchar(5) ,foreign key(course_id,sec_id,semester,year) references section(course_id,sec_id,semester,year),
+primary key(ID,course_id,sec_id,semester,year));
+
+
+
+1
+
+insert into department values('CSE','SEAS',5000);
+insert into student values(101,'Poojan','CSE',3);
+insert into instructor values(201, 'samkit', 'CSE', 500000);
+insert into advisor values(101, 201);
+insert into course values('MAT2XX', 'Probability', 'CSE', 3);
+insert into prereq values('MAT2XX', 'MAT2XX');
+insert into classroom values('SEAS', 401, 50); 
+insert into time_slot values(1, 'monday', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+insert into section values( 'MAT2XX', 'abc1', 3, 2021, 'SEAS' , 401 , 1);
+insert into teaches values( 201  , 'MAT2XX' , 'abc1' , 3, 2021);
+insert into takes values( 101  , 'MAT2XX' , 'abc1' , 3, 2021 , 'A+');
+
+
+2
+
+
+insert into department values('MECH','SEAS',7000);
+insert into student values(102,'MEET','MECH',3);
+insert into instructor values(202, 'sameep', 'MECH', 700000);
+insert into advisor values(102, 202);
+insert into course values('ENR', 'Drawing', 'MECH', 3);
+insert into prereq values('ENR', 'ENR');
+insert into classroom values('SEAS', 402, 70); 
+insert into time_slot values(2, 'tuesday', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+insert into section values( 'ENR', 'abc2', 4, 2021, 'SEAS' , 402 , 2);
+insert into teaches values( 202  , 'ENR' , 'abc2' , 4, 2021);
+insert into takes values( 102  , 'ENR' , 'abc2' , 4, 2021 , 'A-');
+
+
+3
+
+
+insert into department values('CHEM','SEAS',5000);
+insert into student values(103,'Nipun','CHEM',3);
+insert into instructor values(203, 'krunal', 'CHEM', 370000);
+insert into advisor values(103, 203);
+insert into course values('CHE3', 'ChemInDailyLife', 'CHEM', 3);
+insert into prereq values('CHE3', 'CHE3');
+insert into classroom values('SEAS', 403, 40); 
+insert into time_slot values(3, 'wednesday', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+insert into section values( 'CHE3', 'abc3', 1, 2020, 'SEAS' , 403 , 3);
+insert into teaches values( 203  , 'CHE3' , 'abc3' , 1, 2020);
+insert into takes values( 103  , 'CHE3' , 'abc3' , 1, 2020 , 'A+');
+
+
+
+4
+
+
+insert into department values('STATS','AMSOM',3000);
+insert into student values(104,'Rohan','STATS',2);
+insert into instructor values(204, 'sehwag', 'STATS', 770000);
+insert into advisor values(104, 204);
+insert into course values('STA101', 'Statistics', 'STATS', 2);
+insert into prereq values('STA101', 'STA101');
+insert into classroom values('AMSOM', 404, 44); 
+insert into time_slot values(4, 'thursday', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+insert into section values( 'STA101', 'abc4', 2, 2020, 'AMSOM' , 404 , 4);
+insert into teaches values( 204  , 'STA101' , 'abc4' , 2, 2020);
+insert into takes values( 104  , 'STA101' , 'abc4' , 2, 2020 , 'A+');
+
+
+
+5
+
+
+
+insert into department values('BBA','AMSOM',8000);
+insert into student values(105,'Tirth','BBA' ,2);
+insert into instructor values(205, 'neel', 'BBA', 490000);
+insert into advisor values(105, 205);
+insert into course values('ACC101', 'Accounts', 'BBA', 2);
+insert into prereq values('ACC101', 'ACC101');
+insert into classroom values('AMSOM', 405, 80); 
+insert into time_slot values(5, 'thursday', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+insert into section values( 'ACC101', 'abc5', 5, 2019, 'AMSOM' , 405 , 5);
+insert into teaches values( 205  , 'ACC101' , 'abc5' , 5, 2019);
+insert into takes values( 105  , 'ACC101' , 'abc5' , 5, 2019 , 'B+');
+
+
+
+
+
+
+
+
+

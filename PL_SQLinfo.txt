@@ -1,0 +1,210 @@
+PL: Procedural language, SQL: Structural Query Language.
+
+Block : named and unnamed
+
+PLSQL consist of following things:
+declare
+        declaration statements
+begin
+        executable statements
+exception
+        exception handling
+end;
+/
+
+
+(To activate output just type: set serveroutput on)
+
+declare
+	i int:=1;	// here := is an assignment operator
+	j int;
+	d1 date:=sysdate;
+	d2 date:='13-NOV-2001';
+begin
+	i:=months_between(d1,d2);
+	dbms_output.put_line('Months between '|| d1 || 'and ' || d2 || ' are:' || i);
+end;
+/
+
+//taking same thing by just declaring as float and rounding it off.
+
+declare
+	i float:=1;
+	j int;
+	d1 date:=sysdate;
+	d2 date:='13-NOV-2001';
+begin
+	i:=months_between(d1,d2);
+	dbms_output.put_line('Months between '|| d1 || 'and ' || d2 || ' are:' || round(i,4)); 
+end;
+/
+
+
+////TAKING INPUT
+///for string like inputs do the inverted commas at the time of declaration so that we will 
+//not have to do that at the time of input taking.
+
+declare
+	i float:=1;
+	j int;
+	d1 date:='&d1';
+	d2 date:='&d2';
+begin
+	i:=months_between(d1,d2);
+	dbms_output.put_line('Months between '|| d1 || 'and ' || d2 || ' are:' || round(i,4)); 
+end;
+/
+
+
+//conditions and loop
+declare
+	i float:=1;
+	j int;
+	d1 date:='&d1';
+	d2 date:='&d2';
+begin
+        i:=months_between(dt,dt1);
+        dbms_output.put_line('Months between '||dt||'and '||dt1||'= '||round(i,2));
+        if (i>12) then
+           dbms_output.put_line('Eligible for vaccine');
+        elsif (i<=12 and i>=6) then
+            dbms_output.put_line('Eligible for vaccine after six months');
+        else 
+            dbms_output.put_line('Not Eligible for vaccine');
+        end if;
+        for j in 10..1 loop
+               dbms_output.put_line(j);
+        end loop;      
+end;
+/ 
+
+
+
+//for in forward
+declare
+	i int:=1;
+begin
+	for i in 1..10 loop
+		dbms_output.put_line(i);
+	end loop;
+end;
+/
+
+//for in Reverse
+
+declare
+	i int:=1;
+begin
+	for i in reverse 1..10 loop
+		dbms_output.put_line(i);
+	end loop;
+end;
+/
+
+///while loop
+
+declare
+	i int:=1;
+	j int;
+begin
+	j:=1;
+	while(j<=10) loop
+		dbms_output.put_line(j);
+		j:=j+1;
+	end loop;
+end;
+/
+
+
+//for loop iterating+2
+
+
+//CURSOR
+cursor is memory portion in which the records are fetched.
+it points to the first record.
+we can only write select query
+
+--syntax to define the cursor
+
+--cursor <cursor_name> is <select_query>;
+--cursor attributes
+       %notfound -- returns true if there are no records left in the cursor
+       %found   -- returns true if there is at least one record in cursor  
+       %isopen  -- returns true if cursor is open
+       %type    --define datatype which is similar to specific field's datatype 
+       %rowtype --define record variable
+
+1. declaration of cursor
+2. open cursor
+3. Within the loop fetch one by one record
+4. close cursor
+  
+declare
+        cursor c_batsman is select * from batsman;
+        r_batsman c_batsman%rowtype;
+begin
+        open c_batsman; 
+        loop
+            fetch c_batsman into r_batsman;
+            if c_batsman%notfound then 
+               exit;
+            end if;
+            dbms_output.put_line(r_batsman.name||'   '||r_batsman.country);
+                 
+        end loop;
+        close c_batsman;
+end;
+/   
+
+
+declare
+        i batsman.batsman_id%type:=&i; 
+        cursor c_batsman is select * from batsman where batsman_id=i;
+        r_batsman c_batsman%rowtype;
+begin
+        for r_batsman in c_batsman loop      
+            dbms_output.put_line(r_batsman.name||'   '||r_batsman.country);
+        end loop;
+end;
+/
+
+MAKING NAMED PROCEDURAL--->
+
+create or replace procedure test1() as
+	i float:=1;
+	j int;
+	d1 date:=sysdate;
+	d2 date:='13-NOV-2001';
+begin
+	i:=months_between(d1,d2);
+	dbms_output.put_line('Months between '|| d1 || 'and ' || d2 || ' are:' || round(i,4)); 
+end;
+/
+
+// to run it we have to write 
+execute test1;
+or
+exec test1
+
+
+EX---2
+create or replace procedure test1(dt1 date, dt2 date) as
+	i float:=1;
+	j int;
+	d1 date:=sysdate;
+	d2 date:='13-NOV-2001';
+begin
+	i:=months_between(d1,d2);
+	dbms_output.put_line('Months between '|| d1 || 'and ' || d2 || ' are:' || round(i,4)); 
+end;
+/
+
+-----------------------calling block to execute the procedute-------------
+declare
+        d date:='&d';
+        d1 date:='&d1';
+begin
+        test1(d,d1);
+end;
+/  
+--------------------------------------------

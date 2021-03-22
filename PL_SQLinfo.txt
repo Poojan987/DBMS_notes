@@ -392,6 +392,53 @@ end;
 
 
 
+=============================Trigger
+
+Trigger is fired automatically when user does data manipulation(Insert/Delete/Update).
+
+Advantages
+
+1. Data Validation
+2. We may delete child records when parent record is deleted.
+3. Security constraints
+4. Autocalculation and insertion of record in other table
+
+========================
+2 types of trigger
+
+1. statement level trigger : it gets fired when the statement is executed
+2. row level trigger : it gets fired for each row (for each row)
+
+   :new and :old
+                        empid,ename,ebdate
+insert into emp values(1,'abc','12-dec-1999');
+
+   insert ==> :new
+   delete ==> :old
+   update ==> :old and :new
+
+==========================================
+before insert
+after insert
+before delete
+after delete
+before update
+after update
+==================EXAMPLE===========================
+//we will write for each row as we want to apply to every rows
+//when we are going to update or setting, new values will have :new and old will remain according to previous trigger only.
+//therefore no need to write old.name in the extra if condition.
+
+create table tp2(num int,name varchar(10));
+create or replace trigger chck_name before insert or update on tp2
+for each row
+begin
+	if(:new.name is null) then
+		raise_application_error(-20001,'why the name field is empty?');
+	
+	end if;
+end;
+/
 
 
 
@@ -401,11 +448,170 @@ end;
 
 
 
+create table project (groupno int,proj_title varchar2(100), rollno1 int, rollno2 int, rollno3 int);
+
+update project set proj_title='HRMS' where groupno=1;
+
+
+
+create table student101(stdno int primary key,classcode varchar2(20),stdname varchar2(30));
+
+alter table project add constraint fk1 foreign key(rollno1) references student101(stdno);
+alter table project add constraint fk2 foreign key(rollno2) references student101(stdno);
+alter table project add constraint fk3 foreign key(rollno3) references student101(stdno);
+
+alter table student add s1_marks int add s2_marks int add s3_marks int;
+alter table student101 add s1_marks int add s2_marks int add s3_marks int;
+
+create table result101(stdno int,total int,perc float,grade varchar2(2),status varchar2(10));
+create table track(username varchar2(20),dt date, op varchar2(10));
+
+
+insert into student101 values(1940208,'sy','Krina');
+insert into student101 values(1940181,'sy','Arti');
+insert into student101 values(1940145,'sy','Anar');
+
+
+insert into student101 values(1940041,'sy','Deepang');
+insert into student101 values(1940006,'sy','Vats');
+
+insert into project values(1,'Student Management System',1940208,1940181,1940145);
+insert into project values(2,'Library Management System',1940041,1940006,null);
+
+============Delete child records from project table when parent record is deleted from the student101 table.
+
+
+create or replace trigger del_rec before delete on student101
+for each row
+begin
+      delete from project where rollno1=:old.stdno or rollno2=:old.stdno or rollno3=:old.stdno;
+end;
+
+
+=============================
+
+//we will write before delete on student101 otherwise it will generate fk violation on other conditions like after delete on student101 etc.
+
+
+create or replace trigger del_rec1 before delete on student101
+for each row
+begin
+      update project set rollno1=null where rollno1=:old.stdno; 
+      update project set rollno2=null where rollno2=:old.stdno;
+      update project set rollno3=null where rollno3=:old.stdno; 
+end;
+
+===========================
+
+alter table student add s1_marks int add s2_marks int add s3_marks int; 
+
+create or replace trigger ins_res after insert on student101
+for each row
+declare
+        t int;
+        p float;
+        g varchar2(2);
+        s varchar2(10);
+begin
+        t:=:new.s1_marks+:new.s2_marks+:new.s3_marks; 
+        p:=t*100/150;
+        if (:new.s1_marks<18 or :new.s2_marks<18 or :new.s3_marks<18) then
+             s:='Fail';
+             g:='F';
+        else
+             s:='Pass';
+             if (p>=80) then
+                  g:='A';
+             elsif (p<80 and p>=60) then
+                  g:='B';
+             else
+                  g:='C';
+             end if;  
+        end if;
+        insert into result101 values(:new.stdno,t,p,g,s);        
+end;
+/
+
+
+=======================
+
+create or replace trigger tr_user after insert or delete or update on student101
+for each row
+begin
+   if (to_char(sysdate,'dy')='sat' or to_char(sysdate,'dy')='tue') then
+      if (inserting) then
+          insert into track values(user,sysdate,'Insert');
+      elsif (deleting) then
+           insert into track values(user,sysdate,'Delete');
+      else
+          insert into track values(user,sysdate,'Update');
+      end if;
+   end if;
+end;
+/
+
+====================================
 
 
 
 
+======================================SAME TRIGGERS IN NEW TABLE=====================================================================
 
+
+
+insert into ugrpStudent values(101,'Poojan');
+insert into ugrpStudent values(102,'Tirth');
+insert into ugrpStudent values(103,'Hirmay');
+insert into ugrpStudent values(105,'Shubham');
+
+=========trigger for tracking==========
+create or replace trigger tg_track_op after delete or update or insert on ugrpStudent
+for each row
+begin
+	if(to_char(sysdate,'dy')='mon')then
+		if(inserting)	then
+			insert into track values(user,sysdate,'INSERT');
+		elsif(deleting) then
+			insert into track values(user,sysdate,'INSERT');
+		else
+			insert into track values(user,sysdate,'INSERT');
+		end if;
+	end if;
+end;
+/
+
+=======deleting children on deleting parent=======
+insert into ugrp values(101,'wet rw  ');
+insert into ugrp values(102,'shape of u  ');
+insert into ugrp values(101,'Believer');
+insert into ugrp values(103,'HELLO');
+
+create or replace trigger tg_child_deletor before delete on ugrpStudent
+for each row
+begin
+	delete  from ugrp where :old.num=num;
+end;
+/
+
+
+
+
+===============================================To disable any trigger============================================================
+
+
+alter trigger trigger_name disable;
+
+
+=======================================CREATING VIEW OF THE TABLE====================================================================
+create view view_name from select * from student;
+create view view_name from select feild1,field3 from student;
+
+
+create view view1 as select name from ugrpStudent with read only;
+create view view1 as select name from ugrpStudent where num>102 with check option;
+//In the above one if we try to insert values with num>102 in view then it will not allow which 
+//it will allow in normal: 
+create view view1 as select name from ugrpStudent where num>102
 
 
 

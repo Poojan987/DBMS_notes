@@ -1,4 +1,35 @@
 HELLO WORLD
+
+//ALTERING FOREIGN KEY...........
+create table project (groupno int,proj_title varchar2(100), rollno1 int, rollno2 int, rollno3 int);
+
+update project set proj_title='HRMS' where groupno=1;
+
+
+
+create table student101(stdno int primary key,classcode varchar2(20),stdname varchar2(30));
+
+alter table project add constraint fk1 foreign key(rollno1) references student101(stdno);
+
+
+
+alter table project add constraint fk2 foreign key(rollno2) references student101(stdno);
+
+
+alter table project add constraint fk3 foreign key(rollno3) references student101(stdno);
+
+
+alter table student add s1_marks int add s2_marks int add s3_marks int;
+
+
+alter table student101 add s1_marks int add s2_marks int add s3_marks int;
+
+
+create table result101(stdno int,total int,perc float,grade varchar2(2),status varchar2(10));
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 FOREIGN KEY MAY BE NULL
 
 <>      -------> NOT EQUALS TO SIGN

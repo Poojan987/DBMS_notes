@@ -141,7 +141,7 @@ we can only write select query
   
 declare
         cursor c_batsman is select * from batsman;
-        r_batsman c_batsman%rowtype;
+        r_batsman c_batsman%rowtype;		/////////variable_name datatype;
 begin
         open c_batsman; 
         loop
@@ -170,7 +170,7 @@ end;
 
 MAKING NAMED PROCEDURAL--->
 
-create or replace procedure test1() as
+create or replace procedure test1 as
 	i float:=1;
 	j int;
 	d1 date:=sysdate;
@@ -182,9 +182,8 @@ end;
 /
 
 // to run it we have to write 
-execute test1;
-or
-exec test1
+
+
 
 
 EX---2
@@ -199,7 +198,7 @@ begin
 end;
 /
 
------------------------calling block to execute the procedute-------------
+-----------------------calling block to execute the procedute (way 1)-------------
 declare
         d date:='&d';
         d1 date:='&d1';
@@ -207,4 +206,210 @@ begin
         test1(d,d1);
 end;
 /  
+
+-----------------------By writing execute statement (way 2)-------------
+execute test1;
 --------------------------------------------
+
+Procedure do not return any value
+FUNCTIONS RETURNS ONLY 1 VALUE
+
+
+---------making function---------
+create or replace function test2( dt1 date, dt2 date) return float as
+	i int:=1;
+begin 
+	i:=months_between(dt1,dt2);
+	return i;
+end;
+/
+
+
+
+
+
+
+--------executing funciton way1-------
+declare
+	i int:=1;
+	dt1 date:='&dt1';
+	dt2 date:='&dt2';
+begin
+	i:=test2(dt1,dt2);
+	dbms_output.put_line('Months between d1 and d2 are: '||i);
+end;
+/
+
+--------executing funciton way 2-------
+select test2('22-march-2021' ,' 13-nov-2001') from dual;
+select test2('22-march-2021' ,' 13-nov-2001') table_name from  dual;
+
+
+dual is virtual table created by oracle which stores the return values it will destroyed after use
+we can also change the name of return value by writing like syntax 2
+
+
+
+--------good use of funciton-------
+create or replace function test2 return int as
+	cursor cur_stud is select count(*) cnt from student;
+	r_stud cur_stud%rowtype;
+begin 
+	open cur_stud;
+	fetch cur_stud into r_stud;
+	return r_stud.cnt;
+	close cur_stud;
+
+end;
+/
+
+
+----Return whole record book with using only one variable------
+create or replace function test2 return varchar2 as
+	cursor cur_stud is select * from student;
+	rec_stud cur_stud%rowtype;
+	r varchar2(5000);
+begin
+
+	for rec_stud in cur_stud loop
+		r:=r|| chr(10)||' '|| rec_stud.id||' '|| rec_stud.STD_NAME||' '||rec_stud.DEPT_NAME||' '||rec_stud.TOT_CRED;
+	end loop;
+	return r;
+
+	
+end;
+/
+
+--execute--
+select test2 from dual;
+
+
+
+------------------ nested cursor ------------------
+ 101 Poojan CSE 3
+ 102 MEET MECH 3
+ 103 Nipun CHEM 3
+ 104 Rohan STATS 2
+ 105 Tirth BBA 2
+ 106 Atharva CSE 3
+ 107 Preet CSE 3
+ 108 Shrey CSE 2
+ 109 Chiral CSE 3
+ 110 Chiral CSE 3
+
+display all students dept_name vise
+2 cursor are taken 1 from department and other from student
+
+
+
+declare 
+	cursor cur_deptName is select * from department;
+	rec_deptName cur_deptName%rowtype;
+	cursor cur_id(dn student.dept_name%type) is select * from student where dept_name=dn;
+	rec_id cur_id%rowtype;
+begin
+	open cur_deptName;
+	loop
+		fetch cur_deptName into rec_deptName;
+		if cur_deptName%notfound then
+			exit;
+		end if;
+		dbms_output.put_line('department name: '|| rec_deptName.dept_name);
+		
+		
+		open cur_id(rec_deptName.dept_name);
+		loop
+			fetch cur_id into rec_id;
+			if(cur_id%notfound) then
+				exit;
+			end if;
+			dbms_output.put_line('Student Name: '||rec_id.std_name);
+		
+		
+		end loop;
+		close cur_id;
+		
+	end loop;
+	close cur_deptName;
+end;
+/
+
+
+
+
+output:
+department name: CSE
+Student Name: Poojan
+Student Name: Atharva
+Student Name: Preet
+Student Name: Shrey
+Student Name: Chiral
+Student Name: Chiral
+Student Name: devanshu
+Student Name: jay
+department name: MECH
+Student Name: MEET
+department name: CHEM
+Student Name: Nipun
+department name: STATS
+Student Name: Rohan
+department name: BBA
+Student Name: Tirth
+
+
+-----doing same using cursor for loop---
+
+comments can be done by putting -- sign in the beginning
+
+
+
+declare 
+	cursor cur_deptName is select * from department;
+	rec_deptName cur_deptName%rowtype;
+	cursor cur_id(dn student.dept_name%type) is select * from student where dept_name=dn;
+	rec_id cur_id%rowtype;
+begin
+	--open cur_deptName;
+
+		for rec_deptName in  cur_deptName loop
+			dbms_output.put_line('department name: '|| rec_deptName.dept_name);
+			--open cur_id();
+			for rec_id in  cur_id(rec_deptName.dept_name) loop
+				dbms_output.put_line('Student Name: '||rec_id.std_name);
+			end loop;
+			--close cur_id;
+		
+	end loop;
+	--close cur_deptName;
+end;
+/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

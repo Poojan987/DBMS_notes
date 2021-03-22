@@ -1,4 +1,6 @@
 HELLO WORLD
+//WRITE COMMIT; AFTER INSERTION OF DATA
+
 
 //ALTERING FOREIGN KEY...........
 create table project (groupno int,proj_title varchar2(100), rollno1 int, rollno2 int, rollno3 int);

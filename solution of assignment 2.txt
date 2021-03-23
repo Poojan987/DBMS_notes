@@ -1,0 +1,185 @@
+create table branch(branch_name varchar(50) primary key,branch_city varchar(50),assets int);
+create table account(account_number varchar(5) primary key ,branch_name varchar(50) references branch(branch_name),balance int);
+create table loan(loan_number varchar(4) primary key ,branch_name varchar(50) references branch(branch_name),amount int);
+create table customer(customer_name varchar(50) primary key,customer_street varchar(50),customer_city varchar(50));
+create table borrower(customer_name varchar(50) references customer(customer_name),loan_number varchar(4) references loan(loan_number),primary key(customer_name,loan_number));
+create table depositor(customer_name varchar(50) references customer(customer_name),account_number varchar(5) references account(account_number),primary key(customer_name,account_number));
+
+
+borrower->loan->branch;
+
+
+-------------------------1------------------------------------------------------ 
+create or replace borrowerDetailsA2Q1 as
+
+ 
+declare
+	totalLoanAmount int:=0;
+	
+	cursor cur_customer is select customer_name from customer;
+	rec_customer cur_customer%rowtype;
+	
+	cursor cur_borrower(cname customer.customer_name%type) is select * from borrower where customer_name=cname;
+	rec_borrower cur_borrower%rowtype;
+	
+	--Loan
+	cursor cur_loan(ln loan.loan_number%type) is select * from loan where loan_number=ln;
+	rec_loan cur_loan%rowtype;
+	
+	--branch
+	cursor cur_branchCity(bn branch.branch_name%type) is select branch_city from branch where branch_name=bn;
+	rec_branchCity cur_branchCity%rowtype;
+	
+begin
+	for rec_customer in cur_customer loop
+		totalLoanAmount:=0;
+		dbms_output.put_line('Borrower name: '||rec_customer.customer_name);
+		dbms_output.put_line('Loan No		 Branch Name		 Branch City		 Loan Amount');
+		for rec_borrower in cur_borrower(rec_customer.customer_name) loop
+			
+			for rec_loan in cur_loan(rec_borrower.loan_number) loop
+				--BRANCH_NAME IS PRIMAY KEY IN BRANCH THEREFORE IT IS UNIQUE
+				for rec_branchCity in cur_branchCity(rec_loan.branch_name) loop
+					dbms_output.put_line(rec_loan.loan_number||' '||rec_loan.branch_name||' '||rec_branchCity.branch_city||' '|| rec_loan.amount);
+				end loop;
+				totalLoanAmount:=totalLoanAmount+rec_loan.amount;
+			end loop;
+		end loop;
+		if(totalLoanAmount!=0) then
+			dbms_output.put_line('Total loan amount of borrower '||rec_customer.customer_name||': '||totalLoanAmount);
+		end if;
+	end loop;
+end;
+/
+	
+	
+	
+	
+-------------------------1 again------------------------------------------------------ 
+create or replace procedure borrowerDetailsA2Q1 as
+
+ 
+--declare
+	totalLoanAmount int:=0;
+	
+	
+	
+	cursor cur_borrower is select distinct customer_name from borrower;
+	rec_borrower cur_borrower%rowtype;
+	
+	--Loan number
+	cursor cur_loanNumber(cname customer.customer_name%type) is select * from borrower where customer_name=cname;
+	rec_loanNumber cur_loanNumber%rowtype;
+	
+	
+	cursor cur_loan(ln loan.loan_number%type) is select * from loan where loan_number=ln;
+	rec_loan cur_loan%rowtype;
+	
+	--branch
+	cursor cur_branchCity(bn branch.branch_name%type) is select branch_city from branch where branch_name=bn;
+	rec_branchCity cur_branchCity%rowtype;
+	
+begin
+	for rec_borrower in cur_borrower loop
+		totalLoanAmount:=0;
+		dbms_output.put_line('Borrower name: '||rec_borrower.customer_name);
+		dbms_output.put_line('Loan No		 Branch Name		 Branch City		 Loan Amount');
+		for rec_loanNumber in cur_loanNumber(rec_borrower.customer_name) loop
+			
+			for rec_loan in cur_loan(rec_loanNumber.loan_number) loop
+				--BRANCH_NAME IS PRIMAY KEY IN BRANCH THEREFORE IT IS UNIQUE
+				for rec_branchCity in cur_branchCity(rec_loan.branch_name) loop
+					dbms_output.put_line(rec_loan.loan_number||' '||rec_loan.branch_name||' '||rec_branchCity.branch_city||' '|| rec_loan.amount);
+				end loop;
+				totalLoanAmount:=totalLoanAmount+rec_loan.amount;
+			end loop;
+		end loop;
+		if(totalLoanAmount!=0) then
+			dbms_output.put_line('Total loan amount of borrower '||rec_borrower.customer_name||': '||totalLoanAmount||chr(10));
+		end if;
+	end loop;
+end;
+/
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+------------------------------------------------------2nd question------------------------------------------------------
+2. Create a procedure which will display city-wise branch-wise loan details of borrowers in the 
+following format.City : <city name1>
+ Branch Name : <branch name1>
+ Borrower Name :<borrower name1>
+ Loan No Loan Amount
+ ______________________________________________________
+ ______________________________________________________
+
+
+//create or replace city_with_branch_loan_details as
+
+declare 
+	totalAmountAtBranch int :=0;
+	totalAmountAtCity int :=0;
+	
+	cursor cur_branchCity is select distinct branch_city from branch;
+	rec_branchCity cur_branchCity%rowtype;
+	
+	cursor cur_branchName(bc branch.branch_city%type) is select branch_name from branch where branch_city=bc;
+	rec_branchName cur_branchName%rowtype;
+	
+	cursor cur_loanNumber(bn branch.branch_name%type) is select loan_number from loan where branch_name=bn;
+	rec_loanNumber cur_loanNumber%rowtype;
+	
+	cursor cur_borrowerName(ln loan.loan_number%type) is select customer_name from borrower where loan_number=ln;
+	rec_borrowerName cur_borrowerName%rowtype;
+begin
+	for rec_branchCity in cur_branchCity loop
+		dbms_output.put_line('City : '||rec_branchCity.branch_city);
+		for rec_branchName in cur_branchName(rec_branchCity.branch_city) loop
+			dbms_output.put_line('Branch Name :'||rec_branchName.branch_name);
+			for rec_loanNumber in cur_loanNumber(rec_branchName.branch_name) loop
+				for rec_borrowerName in cur_borrowerName loop
+					Borrower Name :<borrower name1>
+					dbms_output.put_line('Borrower Name :'||rec_borrowerName.borrowerName);
+							Loan No Loan Amount
+				end loop;
+			end loop;
+		end loop;
+	end loop;
+end;
+/
+
+
+
+	
+	
+	
+	
+	
+------------------------------------------------------4th question------------------------------------------------------
+	
+4. Write a procedure to display details of the customers who are depositors as well as borrowers
+
+--create or replace customerBothBD as
+
+declare 
+	cursor cur_customer is select * from customer;
+	rec_customer cur_customer%rowtype;
+	
+	cursor cur_borrower is select * from customer;
+	rec_customer cur_customer%rowtype;
+	
+	cursor cur_customer is select * from customer;
+	rec_customer cur_customer%rowtype;
+	
+

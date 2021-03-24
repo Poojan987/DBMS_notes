@@ -103,7 +103,7 @@ end;
 		
 	
 	
-	
+
 	
 	
 	
@@ -160,26 +160,122 @@ end;
 /
 
 
-
+------------------------------------------------------3rd question------------------------------------------------------
 	
 	
 	
-	
+------------------------------------------------------------------------------------------------------------	
 	
 ------------------------------------------------------4th question------------------------------------------------------
 	
 4. Write a procedure to display details of the customers who are depositors as well as borrowers
 
---create or replace customerBothBD as
+--create or replace procedure customerBothBD_A2Q4 as
+declare
+	i int:=1;
+	cursor cur_BothBorroAndDepo is select distinct c.customer_name,c.customer_street,c.customer_city from customer c,borrower b,depositor d where c.customer_name=b.customer_name and c.customer_name=d.customer_name;
+	rec_BothBorroAndDepo cur_BothBorroAndDepo%rowtype;
+begin
+	dbms_output.put_line('-------------------------------------------');	
+	dbms_output.put_line('customer_name customer_street customer_city');	
+	dbms_output.put_line('-------------------------------------------');	
+	for rec_BothBorroAndDepo in cur_BothBorroAndDepo loop
+		dbms_output.put_line(rec_BothBorroAndDepo.customer_name||' '||rec_BothBorroAndDepo.customer_street||' '||rec_BothBorroAndDepo.customer_city);
+	end loop;
+end;
+/
 
-declare 
-	cursor cur_customer is select * from customer;
-	rec_customer cur_customer%rowtype;
-	
-	cursor cur_borrower is select * from customer;
-	rec_customer cur_customer%rowtype;
-	
-	cursor cur_customer is select * from customer;
-	rec_customer cur_customer%rowtype;
-	
 
+
+------------------------------------------------------5th question------------------------------------------------------
+--5. Write a function with parameter branch name. Return total no. of customers of that branch.
+
+create or replace function totCustA2Q5(bn branch.branch_name%type) return int as
+--declare
+		totalCustomer int:=0;
+		flag int:=0;
+		cursor cur_borrower is select distinct customer_name from borrower where borrower.loan_number in  (select loan_number from loan where branch_name=bn );
+		rec_borrower cur_borrower%rowtype;
+		
+		cursor cur_depositer is select distinct customer_name from depositor where depositor.account_number in  (select account_number from account where branch_name=bn );
+		rec_depositer cur_depositer%rowtype;
+begin
+	for rec_borrower in cur_borrower loop
+		totalCustomer:=totalCustomer+1;
+	end loop;
+	
+	for rec_depositer in cur_depositer loop
+		flag:=0;
+		for rec_borrower in cur_borrower loop
+			if(rec_borrower.customer_name=rec_depositer.customer_name) then
+				flag:=1;
+				exit;
+			end if;
+		end loop;
+		if(flag!=1) then
+			totalCustomer:=totalCustomer+1;
+		end if;
+	end loop;
+	return totalCustomer;
+end;
+/
+	
+select totCustA2Q5('Downtown') from dual;
+select totCustA2Q5('Brighton') from dual;
+select totCustA2Q5('Round Hill') from dual;
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------6th question------------------------------------------------------
+	
+	
+	
+------------------------------------------------------------------------------------------------------------	
+
+
+
+
+------------------------------------------------------7th question------------------------------------------------------
+	
+	
+	
+------------------------------------------------------------------------------------------------------------	
+------------------------------------------------------8th question------------------------------------------------------
+	
+	
+	
+------------------------------------------------------------------------------------------------------------	
+
+
+------------------------------------------------------9th question------------------------------------------------------
+	
+	
+	
+------------------------------------------------------------------------------------------------------------	
+
+
+
+------------------------------------------------------10th question------------------------------------------------------
+	
+	
+	
+------------------------------------------------------------------------------------------------------------	
+
+
+
+------------------------------------------------------11th question------------------------------------------------------
+	
+	
+	
+------------------------------------------------------------------------------------------------------------	
+
+
+
+------------------------------------------------------12th question------------------------------------------------------
+	
+	
+	
+------------------------------------------------------------------------------------------------------------	

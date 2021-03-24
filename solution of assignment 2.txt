@@ -220,9 +220,9 @@ begin
 end;
 /
 	
-select totCustA2Q5('Downtown') from dual;
-select totCustA2Q5('Brighton') from dual;
-select totCustA2Q5('Round Hill') from dual;
+select totCustA2Q5('Downtown') TotalCustomer from dual;
+select totCustA2Q5('Brighton') TotalCustomer from dual;
+select totCustA2Q5('Round Hill') TotalCustomer from dual;
 
 ------------------------------------------------------------------------------------------------------------
 
@@ -230,9 +230,21 @@ select totCustA2Q5('Round Hill') from dual;
 
 
 ------------------------------------------------------6th question------------------------------------------------------
-	
-	
-	
+6. Write a function with parameter city name. Return total no. of branches of that city.
+
+create or replace function totalBranchesA2Q6 (ct branch.branch_city%type) return int as
+	cursor cur_totalBranch is select count(branch_name) cnt from branch where branch_city=ct group by branch_city;
+	rec_totalBranch cur_totalBranch%rowtype;
+begin
+	open cur_totalBranch;
+	fetch cur_totalBranch into rec_totalBranch;
+	return rec_totalBranch.cnt;
+	close cur_totalBranch;
+end;
+/
+select totalBranchesA2Q6('Horseneck') TotalBranch from dual;	
+select totalBranchesA2Q6('Brooklyn') TotalBranch from dual;
+
 ------------------------------------------------------------------------------------------------------------	
 
 
@@ -244,22 +256,115 @@ select totCustA2Q5('Round Hill') from dual;
 	
 ------------------------------------------------------------------------------------------------------------	
 ------------------------------------------------------8th question------------------------------------------------------
+8. Write a trigger to check balance amount when user inserts or updates balance in accounts table. 
+If balance < 200, don’t allow to insert/update the record and display appropriate error message.
+
+create or replace trigger chk_balanceA2Q8 before insert or update on account 
+for each row	
+begin 
+	if(:new.balance<200) then
+		raise_application_error(-20002,'-----Please enter balance greater than 200-------');
+	end if;
 	
-	
+end;
+/
+INSERT INTO account VALUES ('A-307', 'Round Hill', 150);
 	
 ------------------------------------------------------------------------------------------------------------	
 
 
 ------------------------------------------------------9th question------------------------------------------------------
+9. Create a table named city_assets with fields city_name and total_assets. 
+Write a trigger which will insert/update a record in city_assets table when user inserts a new 
+record in the branch table. city_assets table should contain total assets of each city. If the city is 
+inserted for the first time in branch table, insert a new record for that city in the city_assets 
+table. If the city which user is inserting in the branch table already exists in the city_assets table, 
+update the amount in the city_assets table.
+
+
+SQL> select branch_city,sum(assets) from branch group by branch_city;
+
+BRANCH_CITY                                        SUM(ASSETS)
+-------------------------------------------------- -----------
+Horseneck                                             10100000
+Brooklyn                                              16100000
+Palo Alto                                              2100000
+Bennington                                              300000
+Rye                                                    3700000
+
+
+create table city_assets(city_name varchar(50) primary key, total_assets int);
+
+
+INSERT INTO city_assets values('Horseneck',10100000);
+INSERT INTO city_assets values('Brooklyn',16100000);
+INSERT INTO city_assets values('Palo Alto',2100000);
+INSERT INTO city_assets values('Bennington',300000);
+INSERT INTO city_assets values('Rye',3700000);
+
+
+create or replace trigger tr_city_assetsA2Q9 before insert on branch
+	for each row
+	declare
+	currentTotAssets int :=0;
+	flag int:=0;
+	cursor cur_city_assets is select * from city_assets;
+	rec_city_assets cur_city_assets%rowtype;
+
+begin 
+	for rec_city_assets in cur_city_assets loop
+		if(:new.branch_city=rec_city_assets.city_name) then
+			flag:=1;
+			currentTotAssets:=rec_city_assets.total_assets;
+			exit;
+		end if;
+	end loop;
+	if(flag=0) then
+		INSERT INTO city_assets values(:new.branch_city,:new.assets);
+	else
+		update city_assets set total_assets=currentTotAssets + :new.assets where city_name= :new.branch_city;
+	end if;
 	
+end;
+/
+INSERT INTO branch VALUES ('branch1', 'Ahmedabad', 4510000);
+delete from branch where branch_name='branch1';
+delete from city_assets where city_name='Ahmedabad';
 	
-	
+INSERT INTO branch VALUES ('branch2', 'Brooklyn',10090);
+delete from branch where branch_name='branch2';
+update city_assets set total_assets=16100000 where city_name='Brooklyn';
+
+
+
+
 ------------------------------------------------------------------------------------------------------------	
 
 
 
 ------------------------------------------------------10th question------------------------------------------------------
+10. Write a trigger which will insert details of user, current date and time in a table named 
+“trapped” after user made any changes(insert/delete/update) in the borrower table on -
+weekends and on weekdays between 10 pm to 6 am. The table trapped contains the fields 
+user_name and date_time.
+
+--SYSTIMESTAMP
+create table trapped(user_name varchar(10),dt timestamp);
+
+create or replace trigger tr_trappedA2Q10 after insert or delete or update on borrower
+	for each row
+	dt timestamp:=SYSTIMESTAMP;
+	lower:=TO_TIMESTAMP('10');
+	upper:=TO_TIMESTAMP('06');
+
+begin
+	 if (to_char(dt,'dy')='sat' or to_char(dt,'dy')='sun') then
+		INSERT INTO trapped VALUES(user,dt);
+	 elsif() then
 	
+	 end if;
+end;
+/
 	
 	
 ------------------------------------------------------------------------------------------------------------	
@@ -267,9 +372,29 @@ select totCustA2Q5('Round Hill') from dual;
 
 
 ------------------------------------------------------11th question------------------------------------------------------
-	
-	
-	
+11. Write a trigger when any record is updated in the account table. When value of any field is 
+updated, keep track of before and after values in the table “redolog_values” for each field of the 
+account table. The redolog_values table contains the fields c_date, field_name, before_value
+and after_value.	
+
+create table redolog_values(c_date date, field_name varchar(20), before_value varchar(50),after_value varchar(50));
+
+
+create or replace trigger tr_accntTrckA2Q11 after update on account
+for each row
+begin
+	if(:old.account_number != :new.account_number) then
+		INSERT INTO redolog_values VALUES(SYSDATE,'account_number',:old.account_number,:new.account_number);
+	end if;
+	if(:old.branch_name != :new.branch_name) then
+		INSERT INTO redolog_values VALUES(SYSDATE,'branch_name',:old.branch_name,:new.branch_name);
+	end if;
+	if(:old.balance != :new.balance) then
+		INSERT INTO redolog_values VALUES(SYSDATE,'balance',:old.balance,:new.balance);
+	end if;
+end;
+/
+update account set balance=350 where account_number='A-305';
 ------------------------------------------------------------------------------------------------------------	
 
 

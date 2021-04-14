@@ -1,8 +1,12 @@
 HELLO WORLD
 //WRITE COMMIT;  OR INSTEAD WRITE  autocommit on; AFTER INSERTION OF DATA
 
+//creating table having foreign key with name
+create table project(num int primary key,std1 int,std2 int,std3 int,constraint fk1 foreign key(std1)  references student101(stdnum),constraint fk2 foreign key(std2) references student101(stdnum),constraint fk3 foreign key(std3) references student101(stdnum));
+
 
 //ALTERING FOREIGN KEY...........
+
 create table project (groupno int,proj_title varchar2(100), rollno1 int, rollno2 int, rollno3 int);
 
 update project set proj_title='HRMS' where groupno=1;

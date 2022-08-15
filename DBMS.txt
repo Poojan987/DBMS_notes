@@ -1,3 +1,14 @@
+//year 2022
+The following solution is wrong . The key is to always use IS NULL or IS NOT NULL operators to specifically check for NULL value.
+
+XXXXXXXXXXXXXXXXXX SELECT name FROM customer WHERE referee_id = NULL OR referee_id <> 2;
+                   SELECT name FROM customer WHERE referee_id <> 2 OR referee_id IS NULL;
+
+If in select statement
+select employee_id,IF (employee_id%2!=0 and name not like "M%",salary,0) as bonus from employees order by employee_id;   
+
+
+//Info written when it was taught
 HELLO WORLD
 //WRITE COMMIT;  OR INSTEAD WRITE  autocommit on; AFTER INSERTION OF DATA
 
